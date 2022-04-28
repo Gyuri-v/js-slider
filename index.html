@@ -41,19 +41,19 @@
       const slideBtnPrev = document.querySelector('.slider__btn--prev');
       const slideBtnNext = document.querySelector('.slider__btn--next');
       
-
       let sliderWidth = slider.offsetWidth;
       let currentSlide = 0;
-      let onlyOnce = 0;
       
       const setRending = function () {
         sliderWidth = slider.offsetWidth;
         getSliderTrackWidth();
-        if( onlyOnce == 0 ){
-          getSliderPaginationBullet();
-          getSliderCurrentPaging();
-          onlyOnce = 1;
-        }
+        getSliderPaginationBullet();
+        getSliderCurrentPaging();
+      }
+      const setReside = function () {
+        sliderWidth = slider.offsetWidth;
+        getSliderTrackWidth();
+        sliderTrack.style.transform = `translateX(${currentSlide * -sliderWidth}px)`;
       }
 
       const getSliderTrackWidth = function () {
@@ -66,8 +66,15 @@
           slidePagination.append(bullet);
           slidePaginationBullets.push(bullet);
         }
-      }
 
+        slidePaginationBullets.forEach((el, index) => {
+          el.addEventListener('click', () => {
+            sliderTrack.style.transform = `translateX(${index * -sliderWidth}px)`;
+            currentSlide = index;
+            getSliderCurrentPaging();
+          })
+        })
+      }
       const getSliderCurrentPaging = function () {
         slidePaginationBullets.forEach(item => {
           item.classList.remove('active');
@@ -75,13 +82,14 @@
         slidePaginationBullets[currentSlide].classList.add('active');
       }
 
+      let moveTranslateValue = 0;
       const onSliderPrev = function () {
-        const currentSlideTransform = ((getComputedStyle(sliderTrack).transform.split('('))[1].split(')')[0].split(',')[4]);
-        const moveTranslateValue = +currentSlideTransform + +sliderWidth;
+        moveTranslateValue += sliderWidth;
       
         if( moveTranslateValue > 0 ){
-          sliderTrack.style.transform = `translateX(${-(sliderWidth * (sliderSlide.length) - sliderWidth)}px)`;
-          currentSlide = sliderSlide.length;
+          moveTranslateValue = -(sliderWidth* (sliderSlide.length - 1));
+          sliderTrack.style.transform = `translateX(${-(sliderWidth * (sliderSlide.length - 1))}px)`;
+          currentSlide = sliderSlide.length - 1;
         }else{
           sliderTrack.style.transform = `translateX(${moveTranslateValue}px)`;
           currentSlide--;
@@ -90,10 +98,10 @@
         getSliderCurrentPaging();
       }
       const onSliderNext = function () {
-        const currentSlideTransform = ((getComputedStyle(sliderTrack).transform.split('('))[1].split(')')[0].split(',')[4]);
-        const moveTranslateValue = +currentSlideTransform - +sliderWidth;
+        moveTranslateValue -= sliderWidth;
         
         if( moveTranslateValue <= -(sliderWidth * sliderSlide.length) ){
+          moveTranslateValue = 0;
           sliderTrack.style.transform = `translateX(0px)`;
           currentSlide = 0;
         }else{
@@ -103,14 +111,44 @@
 
         getSliderCurrentPaging();
       }
-      const onClickPaging = function () {
-        
+      const onDragSlide = function () {
+        if( mouseMoved ){
+          if( xGap < 0 ){
+            onSliderNext();
+          }else if( xGap > 0 ){
+            onSliderPrev();
+          }
+        }
       }
 
       window.addEventListener('load', setRending);
-      window.addEventListener('resize', setRending);
+      window.addEventListener('resize', setReside);
       slideBtnPrev.addEventListener('click', onSliderPrev);
       slideBtnNext.addEventListener('click', onSliderNext);
+      slider.addEventListener('click', onDragSlide);
+
+      // drag 체크 
+      let mouseMoved;
+      let clickStartX;
+      let clickStartTime;
+      let xGap;
+      let timeGap;
+      slider.addEventListener('mousedown', e => {
+        clickStartX = e.clientX;
+        clickStartTime = Date.now();
+      })
+      slider.addEventListener('mouseup', e => {
+        xGap = e.clientX - clickStartX;
+        timeGap = Date.now() - clickStartTime;
+
+        if( Math.abs(xGap) > 5 || timeGap > 500 ){
+          mouseMoved = true;
+        }else{
+          mouseMoved = false;
+        }
+      })
+
+      // 쓰고는 있는데 좋은 코드인지 모르게쪙,, 
 
     </script>
   </div>
