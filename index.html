@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="./css/main.css">
+
+  <title>자바스크립트 슬라이드</title>
+</head>
+<body>
+  <div class="container">
+    <section class="visual">
+      <div class="slider">
+        <div class="slider__track">
+          <div class="slider__slide">
+            <div class="slider__slide--bg" style="background-image: url('./images/slide-img1.jpg')"></div>
+          </div>
+          <div class="slider__slide">
+            <div class="slider__slide--bg" style="background-image: url('./images/slide-img2.jpg')"></div>
+          </div>
+          <div class="slider__slide">
+            <div class="slider__slide--bg" style="background-image: url('./images/slide-img3.jpg')"></div>
+          </div>
+        </div>
+        <div class="slider__btn">
+          <button class="slider__btn--prev" type="button"></button>
+          <button class="slider__btn--next" type="button"></button>
+        </div>
+        <div class="slider__pagination"></div>
+      </div>
+    </section>
+
+    <script>
+      const slider = document.querySelector('.slider');
+      const sliderTrack = document.querySelector('.slider__track');
+      const sliderSlide = document.querySelectorAll('.slider__slide');
+      const slidePagination = document.querySelector('.slider__pagination');
+      const slidePaginationBullets = [];
+      const slideBtnPrev = document.querySelector('.slider__btn--prev');
+      const slideBtnNext = document.querySelector('.slider__btn--next');
+      
+
+      let sliderWidth = slider.offsetWidth;
+      let currentSlide = 0;
+      let onlyOnce = 0;
+      
+      const setRending = function () {
+        sliderWidth = slider.offsetWidth;
+        getSliderTrackWidth();
+        if( onlyOnce == 0 ){
+          getSliderPaginationBullet();
+          getSliderCurrentPaging();
+          onlyOnce = 1;
+        }
+      }
+
+      const getSliderTrackWidth = function () {
+        sliderTrack.style.width = (sliderSlide.length * window.innerWidth) + 'px';
+      }
+      const getSliderPaginationBullet = function () {
+        for (let i = 0; i < sliderSlide.length; i++) {
+          const bullet = document.createElement('div');
+          bullet.classList.add('slider__pagination__bullet');
+          slidePagination.append(bullet);
+          slidePaginationBullets.push(bullet);
+        }
+      }
+
+      const getSliderCurrentPaging = function () {
+        slidePaginationBullets.forEach(item => {
+          item.classList.remove('active');
+        })
+        slidePaginationBullets[currentSlide].classList.add('active');
+      }
+
+      const onSliderPrev = function () {
+        const currentSlideTransform = ((getComputedStyle(sliderTrack).transform.split('('))[1].split(')')[0].split(',')[4]);
+        const moveTranslateValue = +currentSlideTransform + +sliderWidth;
+      
+        if( moveTranslateValue > 0 ){
+          sliderTrack.style.transform = `translateX(${-(sliderWidth * (sliderSlide.length) - sliderWidth)}px)`;
+          currentSlide = sliderSlide.length;
+        }else{
+          sliderTrack.style.transform = `translateX(${moveTranslateValue}px)`;
+          currentSlide--;
+        }
+
+        getSliderCurrentPaging();
+      }
+      const onSliderNext = function () {
+        const currentSlideTransform = ((getComputedStyle(sliderTrack).transform.split('('))[1].split(')')[0].split(',')[4]);
+        const moveTranslateValue = +currentSlideTransform - +sliderWidth;
+        
+        if( moveTranslateValue <= -(sliderWidth * sliderSlide.length) ){
+          sliderTrack.style.transform = `translateX(0px)`;
+          currentSlide = 0;
+        }else{
+          sliderTrack.style.transform = `translateX(${moveTranslateValue}px)`;
+          currentSlide++;
+        }
+
+        getSliderCurrentPaging();
+      }
+      const onClickPaging = function () {
+        
+      }
+
+      window.addEventListener('load', setRending);
+      window.addEventListener('resize', setRending);
+      slideBtnPrev.addEventListener('click', onSliderPrev);
+      slideBtnNext.addEventListener('click', onSliderNext);
+
+    </script>
+  </div>
+</body>
+</html>
