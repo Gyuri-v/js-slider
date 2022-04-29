@@ -54,6 +54,7 @@
         sliderWidth = slider.offsetWidth;
         getSliderTrackWidth();
         sliderTrack.style.transform = `translateX(${currentSlide * -sliderWidth}px)`;
+        moveTranslateValue = currentSlide * -sliderWidth;
       }
 
       const getSliderTrackWidth = function () {
@@ -121,22 +122,18 @@
         }
       }
 
-      window.addEventListener('load', setRending);
-      window.addEventListener('resize', setReside);
-      slideBtnPrev.addEventListener('click', onSliderPrev);
-      slideBtnNext.addEventListener('click', onSliderNext);
-      slider.addEventListener('click', onDragSlide);
-
       // drag 체크 
       let mouseMoved;
       let clickStartX;
       let clickStartTime;
       let xGap;
       let timeGap;
+
       slider.addEventListener('mousedown', e => {
         clickStartX = e.clientX;
         clickStartTime = Date.now();
-      })
+      });
+
       slider.addEventListener('mouseup', e => {
         xGap = e.clientX - clickStartX;
         timeGap = Date.now() - clickStartTime;
@@ -146,10 +143,13 @@
         }else{
           mouseMoved = false;
         }
-      })
+      });
 
-      // 쓰고는 있는데 좋은 코드인지 모르게쪙,, 
-
+      window.addEventListener('load', setRending);
+      window.addEventListener('resize', setReside);
+      slideBtnPrev.addEventListener('click', onSliderPrev);
+      slideBtnNext.addEventListener('click', onSliderNext);
+      slider.addEventListener('click', onDragSlide);
     </script>
   </div>
 </body>
