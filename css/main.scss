@@ -81,9 +81,9 @@ table {
     display: flex; justify-content: center; align-items: center; position: absolute; bottom: 30px; left: 50%; z-index: 3; transform: translateX(-50%);
 
     &__bullet{ 
-      display: block; width: 10px; height: 10px; margin: 0 4px; border-radius: 50%; background: yellow;
+      display: block; width: 10px; height: 10px; margin: 0 4px; border-radius: 50%; background: skyblue;
       
-      &.active{ background: red; }
+      &.active{ background: rgb(235, 249, 255); }
     }
   }
 }

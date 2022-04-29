@@ -129,10 +129,10 @@ table {
   height: 10px;
   margin: 0 4px;
   border-radius: 50%;
-  background: yellow;
+  background: skyblue;
 }
 .slider__pagination__bullet.active {
-  background: red;
+  background: rgb(235, 249, 255);
 }
 
 /*# sourceMappingURL=main.css.map */
