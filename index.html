@@ -54,8 +54,8 @@
       const setReside = function () {
         sliderWidth = slider.offsetWidth;
         getSliderTrackWidth();
-        sliderTrack.style.transform = `translateX(${currentSlide * -sliderWidth}px)`;
-        moveTranslateValue = currentSlide * -sliderWidth;
+        sliderTrack.style.transform = `translateX(${(currentSlide + 1) * -sliderWidth}px)`;
+        moveTranslateValue = (currentSlide + 1) * -sliderWidth;
       }
       const setSliderTrackDuration = function () {
         sliderTrack.style.transitionDuration = `${slideSpeed}ms`;
@@ -117,8 +117,6 @@
           item.classList.remove('active');
         })
         slidePaginationBullets[currentSlide].classList.add('active');
-
-        console.log(currentSlide);
       }
 
       let moveTranslateValue = -sliderWidth;
@@ -161,11 +159,13 @@
         getSliderCurrentPaging();
       }
       const onDragSlide = function () {
-        if( mouseMoved ){
-          if( xGap < 0 ){
-            onSliderNext();
-          }else if( xGap > 0 ){
-            onSliderPrev();
+        if( sliderSlide.length > 1 ){
+          if( mouseMoved ){
+            if( xGap < 0 ){
+              onSliderNext();
+            }else if( xGap > 0 ){
+              onSliderPrev();
+            }
           }
         }
       }
@@ -198,7 +198,12 @@
         timeGap = Date.now() - clickStartTime;
         mouseClickCheck = false;
 
-        if( Math.abs(xGap) > 20 || timeGap > 500 ){
+        if( sliderSlide.length < 2 ){
+          sliderTrack.style.transform = `translateX(0px)`;
+          setSliderTrackDuration();
+        } 
+
+        if( Math.abs(xGap) > 10 || timeGap > 500 ){
           mouseMoved = true;
         }else{
           mouseMoved = false;
