@@ -78,8 +78,8 @@ table {
   top: 0;
   left: 0;
   height: 100%;
-  transform: translate(0, 0);
-  transition: all 0.5s;
+  transform: translateX(0);
+  transition: all 0.01s;
 }
 .slider__slide {
   display: block;
@@ -129,10 +129,10 @@ table {
   height: 10px;
   margin: 0 4px;
   border-radius: 50%;
-  background: skyblue;
+  border: 3px solid skyblue;
 }
 .slider__pagination__bullet.active {
-  background: rgb(235, 249, 255);
+  border-color: rgb(235, 249, 255);
 }
 
 /*# sourceMappingURL=main.css.map */

@@ -63,7 +63,7 @@ table {
 .slider{
   position: relative; width: 100%; height: 800px;
 
-  &__track{ display: flex; position: relative; top: 0; left: 0; height: 100%; transform: translate(0, 0); transition: all 0.5s; }
+  &__track{ display: flex; position: relative; top: 0; left: 0; height: 100%; transform: translateX(0); transition: all 0.01s; }
 
   &__slide{ 
     display: block; position: relative; width: 100vw; height: 100%;
@@ -81,9 +81,9 @@ table {
     display: flex; justify-content: center; align-items: center; position: absolute; bottom: 30px; left: 50%; z-index: 3; transform: translateX(-50%);
 
     &__bullet{ 
-      display: block; width: 10px; height: 10px; margin: 0 4px; border-radius: 50%; background: skyblue;
+      display: block; width: 10px; height: 10px; margin: 0 4px; border-radius: 50%; border: 3px solid skyblue;
       
-      &.active{ background: rgb(235, 249, 255); }
+      &.active{ border-color: rgb(235, 249, 255); }
     }
   }
 }

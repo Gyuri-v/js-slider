@@ -24,10 +24,7 @@
             <div class="slider__slide--bg" style="background-image: url('./images/slide-img3.jpg')"></div>
           </div>
         </div>
-        <div class="slider__btn">
-          <button class="slider__btn--prev" type="button"></button>
-          <button class="slider__btn--next" type="button"></button>
-        </div>
+        <div class="slider__btn"></div>
         <div class="slider__pagination"></div>
       </div>
     </section>
@@ -36,10 +33,10 @@
       const slider = document.querySelector('.slider');
       const sliderTrack = document.querySelector('.slider__track');
       const sliderSlide = document.querySelectorAll('.slider__slide');
+      const slideBtns = document.querySelector('.slider__btn');
       const slidePagination = document.querySelector('.slider__pagination');
       const slidePaginationBullets = [];
-      const slideBtnPrev = document.querySelector('.slider__btn--prev');
-      const slideBtnNext = document.querySelector('.slider__btn--next');
+      const slideSpeed = 300;
       
       let sliderWidth = slider.offsetWidth;
       let currentSlide = 0;
@@ -47,8 +44,12 @@
       const setRending = function () {
         sliderWidth = slider.offsetWidth;
         getSliderTrackWidth();
+        getSliderNavigation();
         getSliderPaginationBullet();
         getSliderCurrentPaging();
+        getSliderClone();
+
+        sliderTrack.style.transform = `translateX(${-sliderWidth}px)`;
       }
       const setReside = function () {
         sliderWidth = slider.offsetWidth;
@@ -56,40 +57,82 @@
         sliderTrack.style.transform = `translateX(${currentSlide * -sliderWidth}px)`;
         moveTranslateValue = currentSlide * -sliderWidth;
       }
+      const setSliderTrackDuration = function () {
+        sliderTrack.style.transitionDuration = `${slideSpeed}ms`;
+        setTimeout(() => {
+          sliderTrack.style.transitionDuration = '0ms';
+        }, slideSpeed);
+      }
 
+      const getSliderClone = function () {
+        const firstSlider = sliderTrack.firstElementChild;
+        const lastSlider = sliderTrack.lastElementChild;
+        const cloneFist = firstSlider.cloneNode(true);
+        const cloneLast = lastSlider.cloneNode(true);
+        cloneFist.classList.add('slider__slide--clone');
+        cloneLast.classList.add('slider__slide--clone');
+        sliderTrack.appendChild(cloneFist);
+        sliderTrack.insertBefore(cloneLast, firstSlider);
+      }
       const getSliderTrackWidth = function () {
-        sliderTrack.style.width = (sliderSlide.length * window.innerWidth) + 'px';
+        sliderTrack.style.width = ((sliderSlide.length + 2) * window.innerWidth) + 'px';
+      }
+      const getSliderNavigation = function () {
+        if( sliderSlide.length > 1 ){
+          const btnPrev = document.createElement('button');
+          btnPrev.setAttribute('type', 'button');
+          btnPrev.classList.add('slider__btn--prev');
+          const btnNext = document.createElement('button');
+          btnNext.setAttribute('type', 'button');
+          btnNext.classList.add('slider__btn--next');
+          slideBtns.append(btnPrev);
+          slideBtns.append(btnNext);
+
+
+          btnPrev.addEventListener('click', onSliderPrev);
+          btnNext.addEventListener('click', onSliderNext);
+        } 
       }
       const getSliderPaginationBullet = function () {
-        for (let i = 0; i < sliderSlide.length; i++) {
-          const bullet = document.createElement('div');
-          bullet.classList.add('slider__pagination__bullet');
-          slidePagination.append(bullet);
-          slidePaginationBullets.push(bullet);
-        }
+        if( sliderSlide.length > 1 ){
+          for (let i = 0; i < sliderSlide.length; i++) {
+            const bullet = document.createElement('div');
+            bullet.classList.add('slider__pagination__bullet');
+            slidePagination.append(bullet);
+            slidePaginationBullets.push(bullet);
+          }
 
-        slidePaginationBullets.forEach((el, index) => {
-          el.addEventListener('click', () => {
-            sliderTrack.style.transform = `translateX(${index * -sliderWidth}px)`;
-            currentSlide = index;
-            getSliderCurrentPaging();
+          slidePaginationBullets.forEach((el, index) => {
+            el.addEventListener('click', () => {
+              setSliderTrackDuration();
+              sliderTrack.style.transform = `translateX(${index * -sliderWidth}px)`;
+              currentSlide = index;
+              getSliderCurrentPaging();
+            })
           })
-        })
+        }
       }
       const getSliderCurrentPaging = function () {
         slidePaginationBullets.forEach(item => {
           item.classList.remove('active');
         })
         slidePaginationBullets[currentSlide].classList.add('active');
+
+        console.log(currentSlide);
       }
 
-      let moveTranslateValue = 0;
+      let moveTranslateValue = -sliderWidth;
       const onSliderPrev = function () {
         moveTranslateValue += sliderWidth;
+
+        setSliderTrackDuration();
       
-        if( moveTranslateValue > 0 ){
-          moveTranslateValue = -(sliderWidth* (sliderSlide.length - 1));
-          sliderTrack.style.transform = `translateX(${-(sliderWidth * (sliderSlide.length - 1))}px)`;
+        if( moveTranslateValue > -sliderWidth ){
+          sliderTrack.style.transform = `translateX(${moveTranslateValue}px)`;
+          setTimeout(() => {
+            moveTranslateValue = -(sliderWidth * sliderSlide.length );
+            sliderTrack.style.transform = `translateX(${-(sliderWidth * sliderSlide.length)}px)`;
+          }, slideSpeed);
           currentSlide = sliderSlide.length - 1;
         }else{
           sliderTrack.style.transform = `translateX(${moveTranslateValue}px)`;
@@ -100,10 +143,15 @@
       }
       const onSliderNext = function () {
         moveTranslateValue -= sliderWidth;
+
+        setSliderTrackDuration();
         
-        if( moveTranslateValue <= -(sliderWidth * sliderSlide.length) ){
-          moveTranslateValue = 0;
-          sliderTrack.style.transform = `translateX(0px)`;
+        if( moveTranslateValue <= -(sliderWidth * (sliderSlide.length + 1)) ){
+          sliderTrack.style.transform = `translateX(${moveTranslateValue}px)`;
+          setTimeout(() => {
+            moveTranslateValue = -sliderWidth;
+            sliderTrack.style.transform = `translateX(${-sliderWidth}px)`;
+          }, slideSpeed);
           currentSlide = 0;
         }else{
           sliderTrack.style.transform = `translateX(${moveTranslateValue}px)`;
@@ -122,34 +170,52 @@
         }
       }
 
-      // drag 체크 
+      // drag & touch 체크 
       let mouseMoved;
       let clickStartX;
       let clickStartTime;
       let xGap;
       let timeGap;
+      let currentSliderTransform;
+      let mouseClickCheck = false;
 
-      slider.addEventListener('mousedown', e => {
-        clickStartX = e.clientX;
+      const onMouseDown = function (e) {
+        clickStartX = (e.clientX ?? e.touches[0].clientX);
         clickStartTime = Date.now();
-      });
+        mouseClickCheck = true;
+        currentSliderTransform =  sliderTrack.style.transform ? +(((sliderTrack.style.transform).split('('))[1].split('p'))[0] : 0;
+      }
+      
+      const onMouseMove = function (e) {
+        xGap = (e.clientX ?? e.changedTouches[0].clientX) - clickStartX;
+        if( mouseClickCheck ){
+          sliderTrack.style.transform = `translateX(${currentSliderTransform + xGap}px)`;
+        }
+      }
 
-      slider.addEventListener('mouseup', e => {
-        xGap = e.clientX - clickStartX;
+      const onMouseUp = function (e) {
+        xGap = (e.clientX ?? e.changedTouches[0].clientX) - clickStartX;
         timeGap = Date.now() - clickStartTime;
+        mouseClickCheck = false;
 
-        if( Math.abs(xGap) > 5 || timeGap > 500 ){
+        if( Math.abs(xGap) > 20 || timeGap > 500 ){
           mouseMoved = true;
         }else{
           mouseMoved = false;
         }
-      });
+      }
+
+      slider.addEventListener('mousedown', onMouseDown);
+      slider.addEventListener('mousemove', onMouseMove)
+      slider.addEventListener('mouseup', onMouseUp);
+      slider.addEventListener('touchstart', onMouseDown);
+      slider.addEventListener('touchmove', onMouseMove)
+      slider.addEventListener('touchend', onMouseUp);
 
       window.addEventListener('load', setRending);
       window.addEventListener('resize', setReside);
-      slideBtnPrev.addEventListener('click', onSliderPrev);
-      slideBtnNext.addEventListener('click', onSliderNext);
       slider.addEventListener('click', onDragSlide);
+      slider.addEventListener('touchend', onDragSlide);
     </script>
   </div>
 </body>
