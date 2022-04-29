@@ -37,9 +37,12 @@
       const slidePagination = document.querySelector('.slider__pagination');
       const slidePaginationBullets = [];
       const slideSpeed = 300;
+      let sliderBtnPrev;
+      let sliderBtnNext;
       
       let sliderWidth = slider.offsetWidth;
       let currentSlide = 0;
+      let checkSlideMoving = false;
       
       const setRending = function () {
         sliderWidth = slider.offsetWidth;
@@ -63,6 +66,12 @@
           sliderTrack.style.transitionDuration = '0ms';
         }, slideSpeed);
       }
+      const setSliderMoving = function () {
+        checkSlideMoving = true;
+        setTimeout(() => {
+          checkSlideMoving = false;
+        }, 1000);
+      }
 
       const getSliderClone = function () {
         const firstSlider = sliderTrack.firstElementChild;
@@ -79,18 +88,18 @@
       }
       const getSliderNavigation = function () {
         if( sliderSlide.length > 1 ){
-          const btnPrev = document.createElement('button');
-          btnPrev.setAttribute('type', 'button');
-          btnPrev.classList.add('slider__btn--prev');
-          const btnNext = document.createElement('button');
-          btnNext.setAttribute('type', 'button');
-          btnNext.classList.add('slider__btn--next');
-          slideBtns.append(btnPrev);
-          slideBtns.append(btnNext);
+          sliderBtnPrev = document.createElement('button');
+          sliderBtnPrev.setAttribute('type', 'button');
+          sliderBtnPrev.classList.add('slider__btn--prev');
+          sliderBtnNext = document.createElement('button');
+          sliderBtnNext.setAttribute('type', 'button');
+          sliderBtnNext.classList.add('slider__btn--next');
+          slideBtns.append(sliderBtnPrev);
+          slideBtns.append(sliderBtnNext);
 
 
-          btnPrev.addEventListener('click', onSliderPrev);
-          btnNext.addEventListener('click', onSliderNext);
+          sliderBtnPrev.addEventListener('click', onSliderPrev);
+          sliderBtnNext.addEventListener('click', onSliderNext);
         } 
       }
       const getSliderPaginationBullet = function () {
@@ -121,42 +130,50 @@
 
       let moveTranslateValue = -sliderWidth;
       const onSliderPrev = function () {
-        moveTranslateValue += sliderWidth;
 
-        setSliderTrackDuration();
-      
-        if( moveTranslateValue > -sliderWidth ){
-          sliderTrack.style.transform = `translateX(${moveTranslateValue}px)`;
-          setTimeout(() => {
-            moveTranslateValue = -(sliderWidth * sliderSlide.length );
-            sliderTrack.style.transform = `translateX(${-(sliderWidth * sliderSlide.length)}px)`;
-          }, slideSpeed);
-          currentSlide = sliderSlide.length - 1;
-        }else{
-          sliderTrack.style.transform = `translateX(${moveTranslateValue}px)`;
-          currentSlide--;
+        if( !checkSlideMoving ) {
+          moveTranslateValue += sliderWidth;
+
+          setSliderTrackDuration();
+
+          if( moveTranslateValue > -sliderWidth ){
+            sliderTrack.style.transform = `translateX(${moveTranslateValue}px)`;
+            setTimeout(() => {
+              moveTranslateValue = -(sliderWidth * sliderSlide.length );
+              sliderTrack.style.transform = `translateX(${-(sliderWidth * sliderSlide.length)}px)`;
+            }, slideSpeed);
+            currentSlide = sliderSlide.length - 1;
+          }else{
+            sliderTrack.style.transform = `translateX(${moveTranslateValue}px)`;
+            currentSlide--;
+          }
+
+          getSliderCurrentPaging();
+          setSliderMoving();
         }
-
-        getSliderCurrentPaging();
       }
       const onSliderNext = function () {
-        moveTranslateValue -= sliderWidth;
 
-        setSliderTrackDuration();
-        
-        if( moveTranslateValue <= -(sliderWidth * (sliderSlide.length + 1)) ){
-          sliderTrack.style.transform = `translateX(${moveTranslateValue}px)`;
-          setTimeout(() => {
-            moveTranslateValue = -sliderWidth;
-            sliderTrack.style.transform = `translateX(${-sliderWidth}px)`;
-          }, slideSpeed);
-          currentSlide = 0;
-        }else{
-          sliderTrack.style.transform = `translateX(${moveTranslateValue}px)`;
-          currentSlide++;
+        if( !checkSlideMoving ){
+          moveTranslateValue -= sliderWidth;
+
+          setSliderTrackDuration();
+
+          if( moveTranslateValue <= -(sliderWidth * (sliderSlide.length + 1)) ){
+            sliderTrack.style.transform = `translateX(${moveTranslateValue}px)`;
+            setTimeout(() => {
+              moveTranslateValue = -sliderWidth;
+              sliderTrack.style.transform = `translateX(${-sliderWidth}px)`;
+            }, slideSpeed);
+            currentSlide = 0;
+          }else{
+            sliderTrack.style.transform = `translateX(${moveTranslateValue}px)`;
+            currentSlide++;
+          }
+
+          getSliderCurrentPaging();
+          setSliderMoving();
         }
-
-        getSliderCurrentPaging();
       }
       const onDragSlide = function () {
         if( sliderSlide.length > 1 ){
@@ -201,12 +218,13 @@
         if( sliderSlide.length < 2 ){
           sliderTrack.style.transform = `translateX(0px)`;
           setSliderTrackDuration();
-        } 
+        }
 
-        if( Math.abs(xGap) > 10 || timeGap > 500 ){
+        if( Math.abs(xGap) > 50 || timeGap > 500 ){
           mouseMoved = true;
         }else{
           mouseMoved = false;
+          sliderTrack.style.transform = `translateX(${(currentSlide + 1) * -sliderWidth}px)`;
         }
       }
 
@@ -214,8 +232,8 @@
       slider.addEventListener('mousemove', onMouseMove)
       slider.addEventListener('mouseup', onMouseUp);
       slider.addEventListener('touchstart', onMouseDown);
-      slider.addEventListener('touchmove', onMouseMove)
       slider.addEventListener('touchend', onMouseUp);
+      slider.addEventListener('touchmove', onMouseMove);
 
       window.addEventListener('load', setRending);
       window.addEventListener('resize', setReside);
