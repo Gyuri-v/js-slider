@@ -36,7 +36,7 @@
       const slideBtns = document.querySelector('.slider__btn');
       const slidePagination = document.querySelector('.slider__pagination');
       const slidePaginationBullets = [];
-      const slideSpeed = 300;
+      const slideSpeed = 500;
       let sliderBtnPrev;
       let sliderBtnNext;
       
@@ -66,12 +66,6 @@
           sliderTrack.style.transitionDuration = '0ms';
         }, slideSpeed);
       }
-      const setSliderMoving = function () {
-        checkSlideMoving = true;
-        setTimeout(() => {
-          checkSlideMoving = false;
-        }, 1000);
-      }
 
       const getSliderClone = function () {
         const firstSlider = sliderTrack.firstElementChild;
@@ -97,7 +91,6 @@
           slideBtns.append(sliderBtnPrev);
           slideBtns.append(sliderBtnNext);
 
-
           sliderBtnPrev.addEventListener('click', onSliderPrev);
           sliderBtnNext.addEventListener('click', onSliderNext);
         } 
@@ -114,7 +107,7 @@
           slidePaginationBullets.forEach((el, index) => {
             el.addEventListener('click', () => {
               setSliderTrackDuration();
-              sliderTrack.style.transform = `translateX(${index * -sliderWidth}px)`;
+              sliderTrack.style.transform = `translateX(${(index + 1) * -sliderWidth}px)`;
               currentSlide = index;
               getSliderCurrentPaging();
             })
@@ -122,57 +115,62 @@
         }
       }
       const getSliderCurrentPaging = function () {
+        let currentPaging;
+        if( currentSlide >= sliderSlide.length ){
+          currentPaging = 0;
+        }else if( currentSlide < 0 ){
+          currentPaging = sliderSlide.length - 1;
+        }else{
+          currentPaging = currentSlide
+        }
         slidePaginationBullets.forEach(item => {
           item.classList.remove('active');
         })
-        slidePaginationBullets[currentSlide].classList.add('active');
+        slidePaginationBullets[currentPaging].classList.add('active');
       }
 
       let moveTranslateValue = -sliderWidth;
       const onSliderPrev = function () {
 
         if( !checkSlideMoving ) {
+          checkSlideMoving = true;
           moveTranslateValue += sliderWidth;
+          sliderTrack.style.transform = `translateX(${moveTranslateValue}px)`;
+          currentSlide--;
 
-          setSliderTrackDuration();
-
-          if( moveTranslateValue > -sliderWidth ){
-            sliderTrack.style.transform = `translateX(${moveTranslateValue}px)`;
-            setTimeout(() => {
+          setTimeout(() => {
+            if( currentSlide == -1 ){
               moveTranslateValue = -(sliderWidth * sliderSlide.length );
               sliderTrack.style.transform = `translateX(${-(sliderWidth * sliderSlide.length)}px)`;
-            }, slideSpeed);
-            currentSlide = sliderSlide.length - 1;
-          }else{
-            sliderTrack.style.transform = `translateX(${moveTranslateValue}px)`;
-            currentSlide--;
-          }
+              currentSlide = sliderSlide.length - 1;
+            }
+            checkSlideMoving = false;
+          }, slideSpeed);
+          
 
+          setSliderTrackDuration();
           getSliderCurrentPaging();
-          setSliderMoving();
         }
       }
       const onSliderNext = function () {
 
         if( !checkSlideMoving ){
+          checkSlideMoving = true;
           moveTranslateValue -= sliderWidth;
+          sliderTrack.style.transform = `translateX(${moveTranslateValue}px)`;
+          currentSlide++;
 
-          setSliderTrackDuration();
-
-          if( moveTranslateValue <= -(sliderWidth * (sliderSlide.length + 1)) ){
-            sliderTrack.style.transform = `translateX(${moveTranslateValue}px)`;
-            setTimeout(() => {
+          setTimeout(() => {
+            if( currentSlide == sliderSlide.length ){
               moveTranslateValue = -sliderWidth;
               sliderTrack.style.transform = `translateX(${-sliderWidth}px)`;
-            }, slideSpeed);
-            currentSlide = 0;
-          }else{
-            sliderTrack.style.transform = `translateX(${moveTranslateValue}px)`;
-            currentSlide++;
-          }
-
+              currentSlide = 0;
+            }
+            checkSlideMoving = false;
+          }, slideSpeed);
+          
+          setSliderTrackDuration();
           getSliderCurrentPaging();
-          setSliderMoving();
         }
       }
       const onDragSlide = function () {
@@ -220,10 +218,11 @@
           setSliderTrackDuration();
         }
 
-        if( Math.abs(xGap) > 50 || timeGap > 500 ){
+        if( Math.abs(xGap) > 150 || timeGap > 500 ){
           mouseMoved = true;
         }else{
           mouseMoved = false;
+          setSliderTrackDuration();
           sliderTrack.style.transform = `translateX(${(currentSlide + 1) * -sliderWidth}px)`;
         }
       }
