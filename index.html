@@ -46,6 +46,9 @@
       
       const setRending = function () {
         sliderWidth = slider.offsetWidth;
+
+        if( sliderSlide.length == 1 ) return;
+
         getSliderTrackWidth();
         getSliderNavigation();
         getSliderPaginationBullet();
@@ -74,6 +77,8 @@
         const cloneLast = lastSlider.cloneNode(true);
         cloneFist.classList.add('slider__slide--clone');
         cloneLast.classList.add('slider__slide--clone');
+        cloneFist.setAttribute('aria-hidden', 'true');
+        cloneLast.setAttribute('aria-hidden', 'true');
         sliderTrack.appendChild(cloneFist);
         sliderTrack.insertBefore(cloneLast, firstSlider);
       }
@@ -116,6 +121,7 @@
       }
       const getSliderCurrentPaging = function () {
         let currentPaging;
+
         if( currentSlide >= sliderSlide.length ){
           currentPaging = 0;
         }else if( currentSlide < 0 ){
@@ -125,12 +131,13 @@
         }
         slidePaginationBullets.forEach(item => {
           item.classList.remove('active');
-        })
+        });
         slidePaginationBullets[currentPaging].classList.add('active');
       }
 
       let moveTranslateValue = -sliderWidth;
       const onSliderPrev = function () {
+        if( sliderSlide.length == 1 ) return;
 
         if( !checkSlideMoving ) {
           checkSlideMoving = true;
@@ -153,6 +160,7 @@
         }
       }
       const onSliderNext = function () {
+        if( sliderSlide.length == 1 ) return;
 
         if( !checkSlideMoving ){
           checkSlideMoving = true;
@@ -202,8 +210,8 @@
       }
       
       const onMouseMove = function (e) {
-        xGap = (e.clientX ?? e.changedTouches[0].clientX) - clickStartX;
         if( mouseClickCheck ){
+          xGap = (e.clientX ?? e.changedTouches[0].clientX) - clickStartX;
           sliderTrack.style.transform = `translateX(${currentSliderTransform + xGap}px)`;
         }
       }
@@ -227,17 +235,48 @@
         }
       }
 
-      slider.addEventListener('mousedown', onMouseDown);
-      slider.addEventListener('mousemove', onMouseMove)
-      slider.addEventListener('mouseup', onMouseUp);
-      slider.addEventListener('touchstart', onMouseDown);
-      slider.addEventListener('touchend', onMouseUp);
-      slider.addEventListener('touchmove', onMouseMove);
+      const outOfBrowser = function(e) {
+        return event.clientX < 0 || event.clientX > window.innerWidth;
+      }
 
       window.addEventListener('load', setRending);
       window.addEventListener('resize', setReside);
-      slider.addEventListener('click', onDragSlide);
-      slider.addEventListener('touchend', onDragSlide);
+      slider.addEventListener('mousedown', onMouseDown);
+      
+      // slider.addEventListener('click', onDragSlide);
+      // slider.addEventListener('touchend', onDragSlide);
+      
+      // slider.addEventListener('mousedown', onMouseDown);
+      // slider.addEventListener('mousemove', onMouseMove)
+      // document.addEventListener('mouseup', onMouseUp);
+
+      // slider.addEventListener('touchstart', onMouseDown);
+      // slider.addEventListener('touchmove', onMouseMove);
+      // document.addEventListener('touchend', onMouseUp);
+
+
+      // const isTouched = false;
+      // start() {
+      //   isTouched = true;
+      //   x
+      //   document.EventListener('pointerend', end);
+      // }
+      // move() {
+      //   if ( !isTouched ) { return false; }
+      //   x
+      //   x
+      // }
+      // end() {
+      //   if ( !isTouched ) { return false; }
+      //   x
+      //   document.removeEventListener('pointerend', end);
+      // }
+
+
+      const slider = new Slider('.slider', {
+
+      });
+      
     </script>
   </div>
 </body>
