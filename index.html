@@ -11,7 +11,7 @@
 </head>
 <body>
   <div class="container">
-    <section class="visual">
+    <section class="example-1">
       <div class="slider">
         <div class="slider__track">
           <div class="slider__slide">
@@ -28,256 +28,56 @@
         <div class="slider__pagination"></div>
       </div>
     </section>
+    <!-- .example1 -->
 
-    <script>
-      const slider = document.querySelector('.slider');
-      const sliderTrack = document.querySelector('.slider__track');
-      const sliderSlide = document.querySelectorAll('.slider__slide');
-      const slideBtns = document.querySelector('.slider__btn');
-      const slidePagination = document.querySelector('.slider__pagination');
-      const slidePaginationBullets = [];
-      const slideSpeed = 300;
-      let sliderBtnPrev;
-      let sliderBtnNext;
-      
-      let sliderWidth = slider.offsetWidth;
-      let currentSlide = 0;
-      let checkSlideMoving = false;
-      
-      const setRending = function () {
-        sliderWidth = slider.offsetWidth;
+    <section class="example-2">
+      <div class="slider">
+        <div class="slider__track">
+          <div class="slider__slide">
+            <div class="slider__slide--bg" style="background-image: url('./images/slide-img1.jpg')"></div>
+          </div>
+          <div class="slider__slide">
+            <div class="slider__slide--bg" style="background-image: url('./images/slide-img2.jpg')"></div>
+          </div>
+          <div class="slider__slide">
+            <div class="slider__slide--bg" style="background-image: url('./images/slide-img3.jpg')"></div>
+          </div>
+          <div class="slider__slide">
+            <div class="slider__slide--bg" style="background-image: url('./images/slide-img4.jpg')"></div>
+          </div>
+          <div class="slider__slide">
+            <div class="slider__slide--bg" style="background-image: url('./images/slide-img1.jpg')"></div>
+          </div>
+          <div class="slider__slide">
+            <div class="slider__slide--bg" style="background-image: url('./images/slide-img2.jpg')"></div>
+          </div>
+          <div class="slider__slide">
+            <div class="slider__slide--bg" style="background-image: url('./images/slide-img3.jpg')"></div>
+          </div>
+          <div class="slider__slide">
+            <div class="slider__slide--bg" style="background-image: url('./images/slide-img4.jpg')"></div>
+          </div>
+        </div>
+        <div class="slider__btn"></div>
+      </div>
+    </section>
+    <!-- .example2 -->
 
-        if( sliderSlide.length == 1 ) return;
-
-        getSliderTrackWidth();
-        getSliderNavigation();
-        getSliderPaginationBullet();
-        getSliderCurrentPaging();
-        getSliderClone();
-
-        sliderTrack.style.transform = `translateX(${-sliderWidth}px)`;
-      }
-      const setReside = function () {
-        sliderWidth = slider.offsetWidth;
-        getSliderTrackWidth();
-        sliderTrack.style.transform = `translateX(${(currentSlide + 1) * -sliderWidth}px)`;
-        moveTranslateValue = (currentSlide + 1) * -sliderWidth;
-      }
-      const setSliderTrackDuration = function () {
-        sliderTrack.style.transitionDuration = `${slideSpeed}ms`;
-        setTimeout(() => {
-          sliderTrack.style.transitionDuration = '0ms';
-        }, slideSpeed);
-      }
-
-      const getSliderClone = function () {
-        const firstSlider = sliderTrack.firstElementChild;
-        const lastSlider = sliderTrack.lastElementChild;
-        const cloneFist = firstSlider.cloneNode(true);
-        const cloneLast = lastSlider.cloneNode(true);
-        cloneFist.classList.add('slider__slide--clone');
-        cloneLast.classList.add('slider__slide--clone');
-        cloneFist.setAttribute('aria-hidden', 'true');
-        cloneLast.setAttribute('aria-hidden', 'true');
-        sliderTrack.appendChild(cloneFist);
-        sliderTrack.insertBefore(cloneLast, firstSlider);
-      }
-      const getSliderTrackWidth = function () {
-        sliderTrack.style.width = ((sliderSlide.length + 2) * window.innerWidth) + 'px';
-      }
-      const getSliderNavigation = function () {
-        if( sliderSlide.length > 1 ){
-          sliderBtnPrev = document.createElement('button');
-          sliderBtnPrev.setAttribute('type', 'button');
-          sliderBtnPrev.classList.add('slider__btn--prev');
-          sliderBtnNext = document.createElement('button');
-          sliderBtnNext.setAttribute('type', 'button');
-          sliderBtnNext.classList.add('slider__btn--next');
-          slideBtns.append(sliderBtnPrev);
-          slideBtns.append(sliderBtnNext);
-
-          sliderBtnPrev.addEventListener('click', onSliderPrev);
-          sliderBtnNext.addEventListener('click', onSliderNext);
-        } 
-      }
-      const getSliderPaginationBullet = function () {
-        if( sliderSlide.length > 1 ){
-          for (let i = 0; i < sliderSlide.length; i++) {
-            const bullet = document.createElement('div');
-            bullet.classList.add('slider__pagination__bullet');
-            slidePagination.append(bullet);
-            slidePaginationBullets.push(bullet);
-          }
-
-          slidePaginationBullets.forEach((el, index) => {
-            el.addEventListener('click', () => {
-              setSliderTrackDuration();
-              sliderTrack.style.transform = `translateX(${(index + 1) * -sliderWidth}px)`;
-              currentSlide = index;
-              getSliderCurrentPaging();
-            })
-          })
-        }
-      }
-      const getSliderCurrentPaging = function () {
-        let currentPaging;
-
-        if( currentSlide >= sliderSlide.length ){
-          currentPaging = 0;
-        }else if( currentSlide < 0 ){
-          currentPaging = sliderSlide.length - 1;
-        }else{
-          currentPaging = currentSlide
-        }
-        slidePaginationBullets.forEach(item => {
-          item.classList.remove('active');
-        });
-        slidePaginationBullets[currentPaging].classList.add('active');
-      }
-
-      let moveTranslateValue = -sliderWidth;
-      const onSliderPrev = function () {
-        if( sliderSlide.length == 1 ) return;
-
-        if( !checkSlideMoving ) {
-          checkSlideMoving = true;
-          moveTranslateValue += sliderWidth;
-          sliderTrack.style.transform = `translateX(${moveTranslateValue}px)`;
-          currentSlide--;
-
-          setTimeout(() => {
-            if( currentSlide == -1 ){
-              moveTranslateValue = -(sliderWidth * sliderSlide.length );
-              sliderTrack.style.transform = `translateX(${-(sliderWidth * sliderSlide.length)}px)`;
-              currentSlide = sliderSlide.length - 1;
-            }
-            checkSlideMoving = false;
-          }, slideSpeed);
-          
-
-          setSliderTrackDuration();
-          getSliderCurrentPaging();
-        }
-      }
-      const onSliderNext = function () {
-        if( sliderSlide.length == 1 ) return;
-
-        if( !checkSlideMoving ){
-          checkSlideMoving = true;
-          moveTranslateValue -= sliderWidth;
-          sliderTrack.style.transform = `translateX(${moveTranslateValue}px)`;
-          currentSlide++;
-
-          setTimeout(() => {
-            if( currentSlide == sliderSlide.length ){
-              moveTranslateValue = -sliderWidth;
-              sliderTrack.style.transform = `translateX(${-sliderWidth}px)`;
-              currentSlide = 0;
-            }
-            checkSlideMoving = false;
-          }, slideSpeed);
-          
-          setSliderTrackDuration();
-          getSliderCurrentPaging();
-        }
-      }
-      const onDragSlide = function () {
-        if( sliderSlide.length > 1 ){
-          if( mouseMoved ){
-            if( xGap < 0 ){
-              onSliderNext();
-            }else if( xGap > 0 ){
-              onSliderPrev();
-            }
-          }
-        }
-      }
-
-      // drag & touch 체크 
-      let mouseMoved;
-      let clickStartX;
-      let clickStartTime;
-      let xGap;
-      let timeGap;
-      let currentSliderTransform;
-      let mouseClickCheck = false;
-
-      const onMouseDown = function (e) {
-        clickStartX = (e.clientX ?? e.touches[0].clientX);
-        clickStartTime = Date.now();
-        mouseClickCheck = true;
-        currentSliderTransform =  sliderTrack.style.transform ? +(((sliderTrack.style.transform).split('('))[1].split('p'))[0] : 0;
-      }
-      
-      const onMouseMove = function (e) {
-        if( mouseClickCheck ){
-          xGap = (e.clientX ?? e.changedTouches[0].clientX) - clickStartX;
-          sliderTrack.style.transform = `translateX(${currentSliderTransform + xGap}px)`;
-        }
-      }
-
-      const onMouseUp = function (e) {
-        xGap = (e.clientX ?? e.changedTouches[0].clientX) - clickStartX;
-        timeGap = Date.now() - clickStartTime;
-        mouseClickCheck = false;
-
-        if( sliderSlide.length < 2 ){
-          sliderTrack.style.transform = `translateX(0px)`;
-          setSliderTrackDuration();
-        }
-
-        if( Math.abs(xGap) > 150 || timeGap > 500 ){
-          mouseMoved = true;
-        }else{
-          mouseMoved = false;
-          setSliderTrackDuration();
-          sliderTrack.style.transform = `translateX(${(currentSlide + 1) * -sliderWidth}px)`;
-        }
-      }
-
-      const outOfBrowser = function(e) {
-        return event.clientX < 0 || event.clientX > window.innerWidth;
-      }
-
-      window.addEventListener('load', setRending);
-      window.addEventListener('resize', setReside);
-      slider.addEventListener('mousedown', onMouseDown);
-      
-      // slider.addEventListener('click', onDragSlide);
-      // slider.addEventListener('touchend', onDragSlide);
-      
-      // slider.addEventListener('mousedown', onMouseDown);
-      // slider.addEventListener('mousemove', onMouseMove)
-      // document.addEventListener('mouseup', onMouseUp);
-
-      // slider.addEventListener('touchstart', onMouseDown);
-      // slider.addEventListener('touchmove', onMouseMove);
-      // document.addEventListener('touchend', onMouseUp);
-
-
-      // const isTouched = false;
-      // start() {
-      //   isTouched = true;
-      //   x
-      //   document.EventListener('pointerend', end);
-      // }
-      // move() {
-      //   if ( !isTouched ) { return false; }
-      //   x
-      //   x
-      // }
-      // end() {
-      //   if ( !isTouched ) { return false; }
-      //   x
-      //   document.removeEventListener('pointerend', end);
-      // }
-
-
-      const slider = new Slider('.slider', {
-
-      });
-      
-    </script>
+    <section class="example-3">
+      <div class="slider">
+        <div class="slider__track">
+          <div class="slider__slide">
+            <div class="slider__slide--bg" style="background-image: url('./images/slide-img1.jpg')"></div>
+          </div>
+          <div class="slider__slide">
+            <div class="slider__slide--bg" style="background-image: url('./images/slide-img2.jpg')"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- .example3 -->
   </div>
+  
+  <script type="module" src="./js/ui.js"></script>
 </body>
 </html>
