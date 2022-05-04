@@ -1,5 +1,3 @@
-import Slider from './Slider.js';
-
 const ex1Slider = document.querySelector('.example-1 .slider');
 const ex2Slider = document.querySelector('.example-2 .slider');
 const ex3Slider = document.querySelector('.example-3 .slider');
