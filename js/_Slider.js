@@ -6,7 +6,7 @@ class Slider {
     option.slidesPerView;
     option.speed;
 
-    const slider = sliderElem;
+    const slider = typeof sliderElem === 'string' ? document.querySelector(sliderElem) : sliderElem;
     const sliderTrack = slider.querySelector('.slider__track');
     const sliderSlide = slider.querySelectorAll('.slider__slide');
     const slideLength = sliderSlide.length;
@@ -303,5 +303,3 @@ class Slider {
     document.addEventListener('pointerleave', onMouseUp);
   }
 }
-
-export default Slider;
