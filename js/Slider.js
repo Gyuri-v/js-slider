@@ -143,7 +143,8 @@ class Slider {
       this.element.apeend(paginationWrap);
     }
     const bullets = [];
-    for (let i = 0; i < this.values.slideLength; i++) {
+    const bulletsLengs = this.options.loop && this.options.slidesPerView > 1 ? this.values.slideLength : this.values.slideLength - this.options.slidesPerView + 1;
+    for (let i = 0; i < bulletsLengs; i++) {
       bullets.push(this.createBullet('slider__pagination__bullet', i, this.onClickPaging.bind(this), paginationWrap));
     }
     return bullets;
@@ -257,9 +258,13 @@ class Slider {
   onMouseUp(e) {
     if (!this.check.isTouched) return;
     this.check.isTouched = false;
+    this.check.xGap = e.clientX - this.check.clickStartX;
+    this.check.TimeGap = Date.now() - this.check.clickStartTime;
 
     if (Math.abs(this.check.xGap) > 30 || this.check.TimeGap > 500) {
       this.check.xGap > 0 ? this.onClickPrev() : this.onClickNext();
+
+      console.log(this.check.xGap, this.check.TimeGap);
     } else {
       Math.abs(this.check.xGap) > 2 ? this.slideBack() : null;
     }

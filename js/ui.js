@@ -9,7 +9,7 @@ const slider2 = new Slider('.example-2 .slider', {
   pagination: true,
   navigation: true,
   loop: true,
-  slidesPerView: 4,
+  slidesPerView: 3,
   spaceBetween: 30,
   speed: 300,
 });
