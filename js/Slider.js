@@ -48,7 +48,7 @@ class Slider {
     this.values.currentTransform = this.options.loop ? -(this.values.slideOuterWidth * this.options.slidesPerView) : 0;
 
     this.options.loop && (this.elements.clones = this.createClones());
-    this.options.navigation && (this.elements.navigation = this.createNavigation()); // 이게 뭐였지...
+    this.options.navigation && (this.elements.navigation = this.createNavigation());
     this.options.pagination && (this.elements.pagination = this.createPagination());
 
     this.elements.track.style.transform = `translateX(${this.values.currentTransform}px)`;
@@ -60,9 +60,21 @@ class Slider {
     this.element.addEventListener('pointermove', this.onMouseMove.bind(this));
     this.element.addEventListener('pointerup', this.onMouseUp.bind(this));
     this.element.addEventListener('pointerleave', this.onMouseUp.bind(this));
+
+    window.addEventListener('resize', () => {
+      this.setResize();
+    });
   }
 
   // --- setting
+  setResize() {
+    this.values.slideWidth = this.setSlideWidth();
+    this.values.slideOuterWidth = this.values.slideWidth + this.options.spaceBetween;
+    this.values.totalWidth = this.setTotalWidth();
+    this.values.currentTransform = -(this.values.slideOuterWidth * this.values.currentIdx) - (this.options.loop ? this.values.slideOuterWidth * this.options.slidesPerView : 0);
+    this.elements.track.style.transform = `translateX(${this.values.currentTransform}px)`;
+  }
+
   setDuration() {
     this.elements.track.style.transitionDuration = `${this.options.speed}ms`;
     setTimeout(() => {
@@ -77,6 +89,14 @@ class Slider {
       this.elements.slides[i].style.width = `${slideWidth}px`;
       if (!this.options.spaceBetween == 0) {
         this.elements.slides[i].style.marginRight = `${this.options.spaceBetween}px`;
+      }
+    }
+    if (this.elements.clones !== null) {
+      for (let i = 0; i < this.elements.clones.length; i++) {
+        this.elements.clones[i].style.width = `${slideWidth}px`;
+        if (!this.options.spaceBetween == 0) {
+          this.elements.clones[i].style.marginRight = `${this.options.spaceBetween}px`;
+        }
       }
     }
     return slideWidth;
@@ -105,6 +125,8 @@ class Slider {
     cloneElem.classList.add('slider__slide--clone');
     place == 'first' ? parent.insertBefore(cloneElem, this.elements.track.firstElementChild) : null;
     place == 'last' ? parent.append(cloneElem) : null;
+
+    return cloneElem;
   }
 
   // --- navigation
@@ -121,6 +143,7 @@ class Slider {
       prev: this.createNaviButton('slider__btn--prev', this.onClickPrev.bind(this), navigationWrap),
       next: this.createNaviButton('slider__btn--next', this.onClickNext.bind(this), navigationWrap),
     };
+
     return arrows;
   }
   createNaviButton(cls, evt, parent) {
@@ -129,6 +152,7 @@ class Slider {
     naviBtn.classList.add(cls);
     naviBtn.addEventListener('click', evt);
     parent.append(naviBtn);
+
     return naviBtn;
   }
 
@@ -147,6 +171,7 @@ class Slider {
     for (let i = 0; i < bulletsLengs; i++) {
       bullets.push(this.createBullet('slider__pagination__bullet', i, this.onClickPaging.bind(this), paginationWrap));
     }
+
     return bullets;
   }
 
@@ -157,6 +182,7 @@ class Slider {
     pagiBullet.classList.add(cls);
     pagiBullet.addEventListener('click', evt);
     parent.append(pagiBullet);
+
     return pagiBullet;
   }
 
