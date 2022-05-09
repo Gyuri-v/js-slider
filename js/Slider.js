@@ -17,8 +17,6 @@ class Slider {
       navigation: null,
       pagination: null,
       clones: null,
-      anchors: null,
-      buttons: null,
     };
     this.values = {
       currentIdx: 0,
@@ -218,10 +216,14 @@ class Slider {
     this.values.currentIdx = idx;
   }
 
-  onClickPrev() {
+  onClickPrev(slideMoveNum) {
     if (this.check.isSlideMoving == true) return;
     if (!this.options.loop && this.values.currentIdx == 0) return this.slideBack();
-    this.values.currentIdx--;
+    if (typeof slideMoveNum == 'object') {
+      this.values.currentIdx--;
+    } else {
+      this.values.currentIdx -= slideMoveNum;
+    }
     this.check.isSlideMoving = true;
 
     if (this.options.loop && this.values.currentIdx == this.values.slideLastIdx) {
@@ -231,10 +233,14 @@ class Slider {
     }
   }
 
-  onClickNext() {
+  onClickNext(slideMoveNum) {
     if (this.check.isSlideMoving == true) return;
     if (!this.options.loop && this.values.currentIdx == this.values.slideLastIdx) return this.slideBack();
-    this.values.currentIdx++;
+    if (typeof slideMoveNum == 'object') {
+      this.values.currentIdx++;
+    } else {
+      this.values.currentIdx += slideMoveNum;
+    }
     this.check.isSlideMoving = true;
 
     if (this.options.loop && this.values.currentIdx == 0) {
@@ -256,22 +262,21 @@ class Slider {
   onMouseMove(e) {
     if (!this.check.isTouched) return;
     if (this.check.isSlideMoving) return;
-    console.log('move');
     this.check.xGap = e.clientX - this.check.clickStartX;
     this.check.TimeGap = Date.now() - this.check.clickStartTime;
     this.elements.track.style.transform = `translateX(${this.values.currentTransform + this.check.xGap}px)`;
   }
   onMouseUp(e) {
     if (!this.check.isTouched) return;
-    console.log('up');
     this.check.isTouched = false;
     this.check.xGap = e.clientX - this.check.clickStartX;
     this.check.TimeGap = Date.now() - this.check.clickStartTime;
 
     if (Math.abs(this.check.xGap) > 30 || this.check.TimeGap > 500) {
-      this.check.xGap > 0 ? this.onClickPrev() : this.onClickNext();
+      let slideMoveNum = Math.round(Math.abs(this.check.xGap) / this.values.slideOuterWidth);
+      slideMoveNum = slideMoveNum == 0 ? 1 : slideMoveNum;
 
-      console.log(this.check.xGap, this.check.TimeGap);
+      this.check.xGap > 0 ? this.onClickPrev(slideMoveNum) : this.onClickNext(slideMoveNum);
     } else {
       Math.abs(this.check.xGap) > 2 ? this.slideBack() : null;
     }
