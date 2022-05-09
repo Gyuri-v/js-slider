@@ -62,15 +62,6 @@ class Slider {
     this.element.addEventListener('pointermove', this.onMouseMove.bind(this));
     this.element.addEventListener('pointerup', this.onMouseUp.bind(this));
     this.element.addEventListener('pointerleave', this.onMouseUp.bind(this));
-
-    this.elements.anchors = this.element.querySelectorAll('a');
-    this.elements.buttons = this.element.querySelectorAll('button');
-    for (let i = 0; i < this.elements.anchors.length; i++) {
-      this.elements.anchors[i].addEventListener('pointerleave', this.onMouseUp.bind(this));
-    }
-    for (let i = 0; i < this.elements.buttons.length; i++) {
-      this.elements.buttons[i].addEventListener('pointerleave', this.onMouseUp.bind(this));
-    }
   }
 
   // --- setting
@@ -258,16 +249,21 @@ class Slider {
     this.check.isTouched = true;
     this.check.clickStartX = e.clientX;
     this.check.clickStartTime = Date.now();
+    if (e.target.tagName == 'A' || e.target.tagName == 'BUTTON') {
+      e.preventDefault();
+    }
   }
   onMouseMove(e) {
     if (!this.check.isTouched) return;
     if (this.check.isSlideMoving) return;
+    console.log('move');
     this.check.xGap = e.clientX - this.check.clickStartX;
     this.check.TimeGap = Date.now() - this.check.clickStartTime;
     this.elements.track.style.transform = `translateX(${this.values.currentTransform + this.check.xGap}px)`;
   }
   onMouseUp(e) {
     if (!this.check.isTouched) return;
+    console.log('up');
     this.check.isTouched = false;
     this.check.xGap = e.clientX - this.check.clickStartX;
     this.check.TimeGap = Date.now() - this.check.clickStartTime;
