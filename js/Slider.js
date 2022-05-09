@@ -17,6 +17,8 @@ class Slider {
       navigation: null,
       pagination: null,
       clones: null,
+      anchors: null,
+      buttons: null,
     };
     this.values = {
       currentIdx: 0,
@@ -60,6 +62,15 @@ class Slider {
     this.element.addEventListener('pointermove', this.onMouseMove.bind(this));
     this.element.addEventListener('pointerup', this.onMouseUp.bind(this));
     this.element.addEventListener('pointerleave', this.onMouseUp.bind(this));
+
+    this.elements.anchors = this.element.querySelectorAll('a');
+    this.elements.buttons = this.element.querySelectorAll('button');
+    for (let i = 0; i < this.elements.anchors.length; i++) {
+      this.elements.anchors[i].addEventListener('pointerleave', this.onMouseUp.bind(this));
+    }
+    for (let i = 0; i < this.elements.buttons.length; i++) {
+      this.elements.buttons[i].addEventListener('pointerleave', this.onMouseUp.bind(this));
+    }
   }
 
   // --- setting
