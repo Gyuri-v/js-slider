@@ -56,10 +56,14 @@ class Slider {
   }
 
   addEvent() {
-    this.element.addEventListener('pointerdown', this.onMouseDown.bind(this));
-    this.element.addEventListener('pointermove', this.onMouseMove.bind(this));
-    this.element.addEventListener('pointerup', this.onMouseUp.bind(this));
-    this.element.addEventListener('pointerleave', this.onMouseUp.bind(this));
+    this.element.addEventListener('mousedown', this.onMouseDown.bind(this));
+    this.element.addEventListener('mousemove', this.onMouseMove.bind(this));
+    this.element.addEventListener('mouseup', this.onMouseUp.bind(this));
+    this.element.addEventListener('mouseleave', this.onMouseUp.bind(this));
+    this.element.addEventListener('touchstart', this.onMouseDown.bind(this));
+    this.element.addEventListener('touchmove', this.onMouseMove.bind(this));
+    this.element.addEventListener('touchend', this.onMouseUp.bind(this));
+    this.element.addEventListener('touchleave', this.onMouseUp.bind(this));
 
     window.addEventListener('resize', () => {
       this.setResize();
@@ -279,7 +283,7 @@ class Slider {
   // --- mouse event
   onMouseDown(e) {
     this.check.isTouched = true;
-    this.check.clickStartX = e.clientX;
+    this.check.clickStartX = e.clientX ?? e.changedTouches[0].clientX;
     this.check.clickStartTime = Date.now();
     if (e.target.tagName == 'A' || e.target.tagName == 'BUTTON') {
       e.preventDefault();
@@ -288,17 +292,17 @@ class Slider {
   onMouseMove(e) {
     if (!this.check.isTouched) return;
     if (this.check.isSlideMoving) return;
-    this.check.xGap = e.clientX - this.check.clickStartX;
+    this.check.xGap = (e.clientX ?? e.changedTouches[0].clientX) - this.check.clickStartX;
     this.check.TimeGap = Date.now() - this.check.clickStartTime;
     this.elements.track.style.transform = `translateX(${this.values.currentTransform + this.check.xGap}px)`;
   }
   onMouseUp(e) {
     if (!this.check.isTouched) return;
     this.check.isTouched = false;
-    this.check.xGap = e.clientX - this.check.clickStartX;
+    this.check.xGap = (e.clientX ?? e.changedTouches[0].clientX) - this.check.clickStartX;
     this.check.TimeGap = Date.now() - this.check.clickStartTime;
 
-    if (Math.abs(this.check.xGap) > 30 || this.check.TimeGap > 500) {
+    if (Math.abs(this.check.xGap) > 50 || this.check.TimeGap > 500) {
       let slideMoveNum = Math.round(Math.abs(this.check.xGap) / this.values.slideOuterWidth);
       slideMoveNum = slideMoveNum == 0 ? 1 : slideMoveNum;
 
