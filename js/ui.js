@@ -20,3 +20,12 @@ const slider3 = new Slider('.example-3 .slider', {
   slidesPerView: 1,
   speed: 500,
 });
+
+slider1.element = document.querySelector('.container');
+slider1.options = {
+  pagination: true,
+  navigation: true,
+  loop: false,
+  slidesPerView: 1,
+  speed: 200,
+};
