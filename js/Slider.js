@@ -1,3 +1,28 @@
+
+function Slider() {
+  let _element;
+  const _init = function() {
+    _element = typeof element === 'string' ? document.querySelector(element) : element;
+    BindEvent();
+    return this;
+  }
+
+  // private
+  const BindEvent = function() {
+    _element.addEventListener('pointer')
+  };
+
+
+  return {
+    element: element,
+    init: _init
+  }
+}
+
+const oSlider = new Slider();
+
+oSlider.init();
+
 class Slider {
   constructor(element, options) {
     const defaults = {
@@ -238,7 +263,7 @@ class Slider {
   }
 
   // --- click event
-  onClickPaging(e) {
+  private onClickPaging(e) {
     if (this._check.isSlideMoving == true) return;
     const nodes = [...e.target.parentElement.children];
     const idx = nodes.indexOf(e.target);
@@ -246,7 +271,7 @@ class Slider {
     this._values.currentIdx = idx;
   }
 
-  onClickPrev(slideMoveNum) {
+  private onClickPrev(slideMoveNum) {
     if (this._check.isSlideMoving == true) return;
     if (!this._options.loop && this._values.currentIdx == 0) return this.slideBack();
     if (typeof slideMoveNum == 'object') {
@@ -263,7 +288,7 @@ class Slider {
     }
   }
 
-  onClickNext(slideMoveNum) {
+  private onClickNext(slideMoveNum) {
     if (this._check.isSlideMoving == true) return;
     if (!this._options.loop && this._values.currentIdx == this._values.slideLastIdx) return this.slideBack();
     if (typeof slideMoveNum == 'object') {
@@ -317,11 +342,8 @@ class Slider {
     let lengs = this._values.slideLength;
     return (lengs + (index % lengs)) % lengs;
   }
-
-  get element() {
-    return this._element;
-  }
-  get options() {
-    return this._options;
-  }
 }
+
+let oSlider = new Slider('.eleme', {});
+
+console.log( oSlider )
